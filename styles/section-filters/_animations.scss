@@ -1,0 +1,34 @@
+
+@keyframes spin {
+  from { 
+    left:-5%;
+  }
+  to { 
+    left:100%;
+  }
+}
+
+@mixin loader-spin {
+  animation-name: spin;
+  animation-duration: 3.5s;
+  animation-timing-function: linear;
+  animation-iteration-count:infinite;
+  animation-fill-mode:both;
+}
+
+@mixin slide-down($type, $Y) {
+  @if $type == 'stop' {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY($Y);
+    transition-property: max-height,transform,opacity;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in;
+  } @else {
+    max-height: 500px;
+    opacity: 1;
+    transition-duration: $animation-duration;
+    transform: translateY($Y);
+  }
+}

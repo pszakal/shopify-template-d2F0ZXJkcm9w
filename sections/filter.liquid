@@ -1,0 +1,410 @@
+{% comment %} 
+  
+  filter.liquid
+
+  Section for filtering collection views. 
+
+  * renders DOM structure for the filter bar
+  * utilizes /assets/filters.js to make the elements interactive, replace 
+    the collection items with the filtered products cards, and maintain 
+    consistency between server rendered page and the filtered page on 
+    client side
+  * utilizes /assets/section-filters.css for styling
+
+{% endcomment %}
+
+
+{{ 'section-filters.css' | asset_url | stylesheet_tag }}
+
+<script type="application/json" id="wd-filter-selction-parameters">
+  {
+    "enable_apply_button": "{{ section.settings.enable_apply_button | default: false }}"
+  }
+</script>
+
+{% liquid
+  assign currencies_using_comma_decimals = 'ANG,ARS,BRL,BYN,BYR,CLF,CLP,COP,CRC,CZK,DKK,EUR,HRK,HUF,IDR,ISK,MZN,NOK,PLN,RON,RUB,SEK,TRY,UYU,VES,VND' | split: ','
+  assign uses_comma_decimals = false
+  if currencies_using_comma_decimals contains cart.currency.iso_code
+    assign uses_comma_decimals = true
+  endif
+%}
+
+
+<div id="wd-filters">
+
+  <div class="page-width center">
+  
+    <div class="wd-loader"></div>
+    
+    <div class="filter-wrapper">
+      <div class="filter-container">
+        
+        <form>
+          <div class="filters">
+            
+
+            <h2 class="show-desktop">Filters:</h2>
+            <button id="open-filter-drawer" class="show-mobile">
+              {% render 'icon-zoom' %} 
+              Filters
+            </button>
+
+            {% comment %} 
+              draw available filters with dropdown contents (on desktop screen):
+            {% endcomment %}
+            
+            <div class="wrapper" >
+            {%- for filter in collection.filters -%}
+              <button class="filter-button filter-button-popup show-desktop" name={{ filter.param_name }} tabindex="0">
+
+                {% comment %} 
+                  filter button label:
+                {% endcomment %}
+                {{ filter.label | escape }} {% render 'icon-caret' %} 
+                
+                {% comment %} 
+                  filter drowdown content:
+                {% endcomment %}
+                <div class="filter-settings">
+                  {% case filter.type %}
+                    {% when 'list' %}
+                      
+                      {%- for value in filter.values -%}
+                        <div class="filter-setting">
+                          
+                          <input 
+                            tabindex="-1"
+                            class="filter-setting-checkbox" 
+                            type="checkbox" 
+                            url_to_remove="{{ value.url_to_remove }}" 
+                            name="{{ value.param_name }}" 
+                            value="{{ value.value }}" 
+                            label="{{ value.label }}" 
+                            id="filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                            {% if value.active %}checked{% endif %}
+                          >
+                          <label for="filter-{{ filter.label | escape }}-{{ forloop.index }}" class="filter-label">
+                            {{ value.label | escape }} ({{ value.count }})
+                          </label>
+                        </div>
+                      {%- endfor -%}
+                      
+                    {% when 'price_range' %}
+                      
+                      <div class="price-range">
+                        <div class="field">
+                          
+                          <input class="field__input"
+                            tabindex="-1"
+                            name="{{ filter.min_value.param_name }}"
+                            id="filter-{{ filter.label | escape }}-GTE"
+                            {%- if filter.min_value.value -%}
+                              {%- if uses_comma_decimals -%}value="{{ filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                            {%- endif -%}
+                            type="number"
+                            url_to_remove="{{ filter.url_to_remove }}" 
+                            placeholder="0"
+                            min="0"
+                            inputmode="decimal"
+                            {%- if uses_comma_decimals -%}max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"{% endif %}
+                          >
+                          <label class="field__label" for="filter-{{ filter.label | escape }}-GTE">from</label>
+                        </div>
+                        <div class="field">
+                          <input class="field__input"
+                            tabindex="-1"
+                            name="{{ filter.max_value.param_name }}"
+                            id="filter-{{ filter.label | escape }}-LTE"
+                            {%- if filter.max_value.value -%}
+                              {%- if uses_comma_decimals -%}value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '' }}"{% endif %}
+                            {%- endif -%}
+                            type="number"
+                            url_to_remove="{{ filter.url_to_remove }}" 
+                            min="0"
+                            inputmode="decimal"
+                            {%- if uses_comma_decimals -%}
+                              placeholder="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                              max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                            {%- else -%}
+                              placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                              max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '' }}"
+                            {% endif %}
+                          >
+                          <label class="field__label" for="filter-{{ filter.label | escape }}-GTE">to</label>
+                        </div>
+                      </div>
+                  {% endcase %}
+
+                  {% comment %} 
+                    Reset button of dropdown:
+                  {% endcomment %}
+                  <div class="filter-footer">
+                    
+                    <a href="{{ filter.url_to_remove }}" class="filter-reset-button link underlined-link" tabindex="-1">
+                      reset
+                    </a>
+                    
+                  </div>
+                </div>
+              </button>
+            {%- endfor -%}
+            </div>
+            
+          </div>
+
+
+
+
+          {% comment %} 
+            sort 
+          {% endcomment %}
+          <div class="filter-button filter-sort show-desktop">
+
+            {%- liquid
+              for option in collection.sort_options
+                if option.value == collection.sort_by
+                  assign defaultSort = option.name
+                endif
+                if defaultSort == blank
+                  assign defaultSort = collection.sort_options.first.name
+                endif
+              endfor  
+            -%} 
+            
+            <div class="filter-setting filter-setting-select">
+              {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+              <select name="sort_by" tabindex="0">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected="selected"{% endif %}>Sort by {{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+
+          </div>
+
+          {% comment %} 
+            result stats 
+          {% endcomment %}
+          <div class="filter-button">
+            
+            <span class="wd-filter-products-count">{{ collection.products_count }}</span> of 
+            <span class="wd-filter-all-products-count">{{ collection.all_products_count }}</span> products
+            
+          </div>
+          
+        </form>
+
+          
+      </div>
+    </div>
+
+
+    {% comment %} 
+      Detect if summary should be opened on page load 
+    {% endcomment %}
+    {% liquid 
+      assign summaryOpen = 0 
+      for filter in collection.filters
+        for value in filter.active_values
+          assign summaryOpen = summaryOpen | plus: 1
+        endfor
+        if filter.type == "price_range" and filter.min_value.value > 0 or filter.max_value.value > 0
+          assign summaryOpen = summaryOpen | plus: 1
+        endif
+      endfor
+    %}
+
+    {% comment %} 
+      Summary
+    {% endcomment %}
+    
+    <div id="wd-filter-summary" {% if summaryOpen > 0 %} class="open" {% endif %}>
+      {%- for filter in collection.filters -%}
+        {%- for value in filter.active_values -%}
+          
+          <div class="filter-summary-item filter-summary-button" name={{ filter.param_name }}>
+            <a href="{{ value.url_to_remove }}" name="{{ value.param_name }}" tabindex="-1">
+              <span value="{{ value.value }}">
+                <span>{{ value.label | escape }}</span>
+                {% render 'icon-close-small' %}
+                <span class="visually-hidden">clear</span>
+              </span>
+            </a>
+          </div>
+        {%- endfor -%}
+        {% if filter.type == "price_range" %}
+          {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+            {%-liquid
+              if filter.min_value.value
+                assign priceRangeValueMin = filter.min_value.value | money
+              else
+                assign priceRangeValueMin = 0 | money
+              endif
+              if filter.max_value.value
+                assign priceRangeValueMax = filter.max_value.value | money
+              else
+                assign priceRangeValueMax = filter.range_max | money
+              endif
+            %}
+            <div class="filter-summary-item filter-summary-button" name={{ filter.param_name }}>
+              <a href="{{ filter.url_to_remove }}" name="{{ filter.param_name }}" tabindex="-1">
+                <span name="filter.v.price.gte">
+                  {{ priceRangeValueMin }}</span>-<span name="filter.v.price.lte">{{ priceRangeValueMax }}
+                </span>
+                {% render 'icon-close-small' %}
+              </a>
+            </div>
+          {%- endif -%}
+        {% endif %}
+      {%- endfor -%}
+      <div class="filter-summary-item" id="wd-filter-clear">
+        <a href="{{ collection.url }}" class="underlined-link" tabindex="0">Clear filters</a>
+      </div>
+      {% if section.settings.enable_apply_button %}
+        <div class="wd-apply-button filter-summary-item show-desktop">
+          <button class="underlined-link"><span>Apply filters</span> {% render 'icon-checkmark' %} </button>
+        </div>
+      {% endif %}
+    </div>
+
+    {% comment %} 
+      UI for mobile screens 
+    {% endcomment %}
+    <div id="wd-filter-drawer" class="show-mobile">
+      <div class="backdrop"></div>
+      <div class="wrapper">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <h2>Filters</h2>
+            <span class="drawer-stats">
+              <span class="wd-filter-products-count">{{ collection.products_count }}</span> of 
+              <span class="wd-filter-all-products-count">{{ collection.all_products_count }}</span> products
+            </span>
+          </div>
+          
+          <div tabindex="0" class="close-button">{%- render 'icon-close' -%}</div>
+        </div>
+
+        <div class="drawer-content">
+        
+          {%- for filter in collection.filters -%}
+            
+            <div class="filter-button filter-button-popup" name={{ filter.param_name }}>
+
+              {{ filter.label | escape }} {% render 'icon-caret' %} 
+              
+              <div class="filter-settings">
+                {% case filter.type %}
+                  {% when 'list' %}
+                    
+                    {%- for value in filter.values -%}
+                      <div class="filter-setting">
+                        <input 
+                          class="filter-setting-checkbox" 
+                          type="checkbox" 
+                          url_to_remove="{{ value.url_to_remove }}" 
+                          name="{{ value.param_name }}" 
+                          value="{{ value.value }}" 
+                          label="{{ value.label }}" 
+                          id="filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                          {% if value.active %}checked{% endif %}
+                        >
+                        <label for="filter-{{ filter.label | escape }}-{{ forloop.index }}" class="filter-label">
+                          {{ value.label | escape }} ({{ value.count }})
+                        </label>
+                      </div>
+                    {%- endfor -%}
+                    
+                  {% when 'price_range' %}
+                    <div class="price-range">
+                      <div class="field">
+                        <input class="field__input"
+                          name="{{ filter.min_value.param_name }}"
+                          id="filter-{{ filter.label | escape }}-GTE"
+                          {%- if filter.min_value.value -%}
+                            {%- if uses_comma_decimals -%}value="{{ filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                          {%- endif -%}
+                          type="number"
+                          url_to_remove="{{ filter.url_to_remove }}" 
+                          placeholder="0"
+                          min="0"
+                          inputmode="decimal"
+                          {%- if uses_comma_decimals -%}max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"{% endif %}
+                        >
+                        <label class="field__label" for="filter-{{ filter.label | escape }}-GTE">from</label>
+                      </div>
+                      <div class="field">
+                        <input class="field__input"
+                          name="{{ filter.max_value.param_name }}"
+                          id="filter-{{ filter.label | escape }}-LTE"
+                          {%- if filter.max_value.value -%}
+                            {%- if uses_comma_decimals -%}value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"{%- else -%}value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '' }}"{% endif %}
+                          {%- endif -%}
+                          type="number"
+                          url_to_remove="{{ filter.url_to_remove }}" 
+                          min="0"
+                          inputmode="decimal"
+                          {%- if uses_comma_decimals -%}
+                            placeholder="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                            max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                          {%- else -%}
+                            placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            max="{{ filter.range_max | money_without_currency | replace: '.', '' | replace: ',', '' }}"
+                          {% endif %}
+                        >
+                        <label class="field__label" for="filter-{{ filter.label | escape }}-GTE">to</label>
+                      </div>
+                    </div>
+                {% endcase %}
+                <div class="filter-footer">
+                  <div>
+                    <a href="{{ filter.url_to_remove }}" class="filter-reset-button link underlined-link">
+                      reset
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            
+          {%- endfor -%}
+
+
+        </div>
+        {% if section.settings.enable_apply_button %}
+          <div class="wd-apply-button filter-summary-item">
+            <span>Apply filters</span> {% render 'icon-checkmark' %}
+          </div>
+        {% endif %}
+      
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+
+<script src="{{ 'filter.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "filter",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_apply_button",
+      "default": false,
+      "label": "Enable apply button"
+    }
+  ],
+  "presets": [
+    {
+      "name": "filter"
+    }
+  ]
+}
+{% endschema %}

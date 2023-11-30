@@ -1,0 +1,145 @@
+{% layout none %}
+
+{% comment %} 
+
+   This is an endpoint for 'assets/filter.js'
+
+   It provides the neccessary data and DOM elements for the JS. 
+
+   It helps to keep consistency with the existing template design since it uses 
+   the same product card rendering pattern. It resist to the future changes of 
+   the template
+   
+   usage: fetch(`${your_template_url}?${your_filter_params}&view=filter-provider`)
+
+   more about filter's URL structure:
+   https://shopify.dev/docs/themes/navigation-search/filtering/storefront-filtering#url-parameter-structure
+
+{% endcomment %}
+
+
+
+{% comment %} 
+   Provide results statistics for JS
+{% endcomment %}
+
+<script type="application/json" id="stats">
+   {
+      "products_count": {{ collection.products_count }},
+      "all_products_count": "{{ collection.all_products_count }}"
+   }
+</script>
+
+
+{% comment %} 
+   Capture URL query parameters to provide collection parameters
+   to JS (like products_per_page)
+   (It could be avoided if the filter was rendered in to the 
+   collection liquid as snippet instead of being a section)
+{% endcomment %}
+
+
+{%- capture contentForQuerystring -%}
+   {{ content_for_header }}
+{%- endcapture -%}
+{%- assign pageUrl = contentForQuerystring
+   | split: '"pageurl":"'
+   | last
+   | split: '"'
+   | first
+   | split: '.myshopify.com'
+   | last
+   | replace: '\/', '/'
+   | replace: '%20', ' '
+   | replace: '\u0026', '&'
+-%}
+{% capture queryParams %}{{ pageUrl | split: '?' | last }}{% endcapture %}
+{% assign params = queryParams | split: '&' %}
+
+{% for param in params %}
+   {% assign p = param | split: '=' %}
+   {% assign key = p | first %}
+   {% assign value = p | last %}
+
+   {% case key %}
+      {% when "products_per_page" %}
+         {% assign products_per_page = value %}
+      {% when "media_aspect_ratio" %}
+         {% assign image_ratio = value %}
+      {% when "show_secondary_image" %}
+         {% if value == "true" %}
+            {% assign show_secondary_image = true %}
+         {% else %}
+            {% assign show_secondary_image = false %}
+         {% endif %}
+         
+      {% when "show_vendor" %}
+         {% if value == "true" %}
+            {% assign show_vendor = true %}
+         {% else %}
+            {% assign show_vendor = false %}
+         {% endif %}
+      {% when "show_rating" %}
+         {% if value == "true" %}
+            {% assign showrating = true %}
+         {% else %}
+            {% assign showrating = false %}
+         {% endif %}
+      {% when "show_quick_add" %}
+         {% if value == "true" %}
+            {% assign enable_quick_add = true %}
+         {% else %}
+            {% assign enable_quick_add = false %}
+         {% endif %}
+      {% when "section_id" %}
+         {% if value == "true" %}
+            {% assign section_id = true %}
+         {% else %}
+            {% assign section_id = false %}
+         {% endif %}
+   {% endcase %}
+{% endfor %}
+
+
+
+
+{% paginate collection.products by products_per_page | default: 16 %}
+
+   {% comment %} 
+      Render the current product cards in to div#cards. 
+      JS will parse it and render the new cards.
+   {% endcomment %}
+
+   <ul id="product-grid" class="
+      grid product-grid grid--2-col-tablet-down
+      grid--3-col-desktop
+   ">
+      {%- for product in collection.products -%}
+      <li class="grid__item">
+
+         {% render 'card-product',
+            card_product: product,
+            media_aspect_ratio: image_ratio,
+            show_secondary_image: show_secondary_image,
+            show_vendor: show_vendor,
+            show_rating: showrating,
+            show_quick_add: false,
+            section_id: section_id,
+            enable_quick_add: enable_quick_add,
+            lazy_load: true
+         %}
+      </li>
+      {%- endfor -%}
+   </ul>
+
+   {%- if paginate.pages > 1 -%}
+      <div id="pagination">
+      
+         {% render 'pagination', paginate: paginate, anchor: '' %}
+      
+      <div>
+   {%- endif -%}   
+
+{% endpaginate %}
+
+

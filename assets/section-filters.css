@@ -1,0 +1,415 @@
+@media (max-width: 1023px) {
+  #wd-filters .show-desktop {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  #wd-filters .show-mobile {
+    display: none;
+  }
+}
+
+#wd-filters {
+  background-color: white;
+  position: relative;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+#wd-filters h2 {
+  font-size: 1.4rem;
+  margin: 0;
+  padding: 0.5rem 3rem 0.5rem 0;
+}
+#wd-filters .filter-wrapper {
+  padding: 0.5rem 0;
+  display: block;
+  grid-column-start: span 2;
+}
+#wd-filters form {
+  display: grid;
+  gap: 0 0.5rem;
+  grid-template-columns: 1fr max-content max-content;
+  margin: 0.5rem;
+  align-items: start;
+}
+#wd-filters form > .filter-button:last-child {
+  padding-right: 0;
+  margin-right: 0;
+}
+#wd-filters .filters {
+  align-items: center;
+  display: flex;
+}
+#wd-filters .filters .wrapper {
+  margin-right: 3.5rem;
+  align-items: center;
+  align-self: flex-start;
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#wd-filters .filter-button {
+  position: relative;
+  margin-right: 1.5rem;
+  color: rgba(var(--color-foreground), 0.75);
+  font-size: 1.4rem;
+  padding: 0.5rem 3rem 0.5rem 1.25rem;
+  border-radius: 0.3rem;
+  background-color: transparent;
+  line-height: inherit;
+  border: none;
+}
+#wd-filters .filter-button.filter-sort {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+#wd-filters .filter-button-popup {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  padding-right: 3rem;
+}
+#wd-filters .filter-button-popup:hover, #wd-filters .filter-button-popup.active {
+  color: black;
+  background-color: rgb(var(--color-background));
+}
+#wd-filters .filter-button-popup .icon-caret {
+  position: absolute;
+  height: 0.6rem;
+  right: 1.25rem;
+  top: calc(50% - 0.2rem);
+}
+
+@keyframes spin {
+  from {
+    left: -5%;
+  }
+  to {
+    left: 100%;
+  }
+}
+#wd-filters .filter-button .filter-settings {
+  width: 35rem;
+  position: absolute;
+  left: 0;
+  top: 3.25rem;
+  pointer-events: none;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(1px);
+  transition-property: max-height, transform, opacity;
+  transition-duration: 0.1s;
+  transition-timing-function: ease-in;
+}
+#wd-filters .filter-button .filter-settings .filter-setting {
+  display: flex;
+}
+#wd-filters .filter-button.active .filter-settings {
+  z-index: 2;
+  display: block;
+  max-height: 500px;
+  opacity: 1;
+  transition-duration: 0.2s;
+  transform: translateY(0px);
+  pointer-events: all;
+}
+#wd-filters .filter-button .filter-footer {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+#wd-filters .filter-button .filter-setting:not(.filter-setting-select):first-child {
+  margin-top: 1rem;
+}
+#wd-filters .filter-button .filter-setting input[type=checkbox] {
+  background-color: white;
+  width: 2em;
+  margin: 1em 0 1em 1em;
+}
+#wd-filters .filter-button .filter-setting select {
+  background-color: white;
+  padding: 0.5rem;
+  border: none;
+  margin: 1em 0 1em 1em;
+  color: rgba(var(--color-foreground), 0.75);
+  letter-spacing: 0.06rem;
+  font-family: var(--font-body-family);
+  font-style: var(--font-body-style);
+  font-weight: var(--font-body-weight);
+  font-size: 1.4rem;
+  text-align: right;
+  cursor: pointer;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+}
+#wd-filters .filter-button .filter-setting label {
+  margin: 1em;
+}
+#wd-filters .filter-button .filter-setting.filter-setting-select {
+  display: block;
+  text-align: left;
+}
+#wd-filters .filter-button .filter-setting.filter-setting-select label {
+  padding: 1rem;
+}
+#wd-filters .filter-button .filter-setting.filter-setting-select label, #wd-filters .filter-button .filter-setting.filter-setting-select select {
+  margin: 0;
+  display: block;
+  cursor: pointer;
+  padding: 0.8rem 0.5rem 0.8rem 1.25rem;
+}
+#wd-filters .filter-button .filter-setting.filter-setting-select label:hover, #wd-filters .filter-button .filter-setting.filter-setting-select select:hover {
+  color: black;
+  background-color: rgb(var(--color-background));
+}
+#wd-filters .filter-button .price-range {
+  display: flex;
+  margin: 1em;
+}
+#wd-filters .filter-button .price-range .field {
+  margin: 0 0.3em;
+}
+
+#wd-filter-summary {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -0.5rem 1rem -0.5rem;
+  font-size: 1.4rem;
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+}
+#wd-filter-summary.open {
+  transition-duration: 0.5s;
+  max-height: 100px;
+}
+#wd-filter-summary .filter-summary-item {
+  margin: 0.5rem 0.5rem 1rem 0.5rem;
+}
+#wd-filter-summary .filter-summary-item .underlined-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#wd-filter-summary .filter-summary-item .underlined-link:hover {
+  color: rgb(var(--color-link));
+  text-decoration-thickness: 0.2rem;
+}
+#wd-filter-summary .filter-summary-button {
+  transition: all 0.2s ease;
+}
+#wd-filter-summary .filter-summary-button a {
+  border-radius: 3rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  color: black;
+  background-color: white;
+}
+#wd-filter-summary .filter-summary-button.adding {
+  opacity: 0;
+  transform: scale(0.8);
+}
+#wd-filter-summary .filter-summary-button.deleting {
+  opacity: 0;
+  transform: scale(0.8);
+}
+#wd-filter-summary svg {
+  margin-top: -2px;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  padding: 6px;
+}
+#wd-filter-summary svg:hover path {
+  stroke: rgb(var(--color-base-accent-2));
+}
+#wd-filter-summary svg path {
+  transition: stroke 0.2s ease-in-out;
+}
+#wd-filter-summary .wd-apply-button button {
+  border: none;
+  background-color: transparent;
+}
+
+#wd-filter-clear {
+  margin: 0.5rem 0.5rem 1rem 0.5rem;
+}
+
+#wd-filters #open-filter-drawer {
+  background-color: white;
+  border: none;
+  font-size: 1.4rem;
+  padding: 0.9rem 1.25rem 0.9rem 1.25rem;
+  margin-left: -1.25rem;
+  cursor: pointer;
+}
+#wd-filters #open-filter-drawer .icon {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+  margin-top: -4px;
+}
+#wd-filters #wd-filter-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  right: 0;
+  z-index: 999;
+  opacity: 0;
+  overflow: hidden;
+  transition: left 0.2s ease, opacity 0.2s ease;
+}
+#wd-filters #wd-filter-drawer.open {
+  left: 0;
+  opacity: 1;
+}
+#wd-filters #wd-filter-drawer.open .wrapper {
+  transform: translate(0);
+}
+#wd-filters #wd-filter-drawer.open .backdrop {
+  display: block;
+}
+#wd-filters #wd-filter-drawer .backdrop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+#wd-filters #wd-filter-drawer .wrapper {
+  display: block;
+  background-color: rgb(var(--color-background));
+  width: calc(100% - 5rem);
+  margin-left: auto;
+  height: 100%;
+  max-width: 37.5rem;
+  transition: transform 0.4s ease;
+  transform: translate(100%);
+}
+#wd-filters #wd-filter-drawer .drawer-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 1;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+#wd-filters #wd-filter-drawer .drawer-header .drawer-title {
+  text-align: left;
+  line-height: 1.2;
+}
+#wd-filters #wd-filter-drawer .drawer-header .drawer-title > div {
+  font-weight: bold;
+}
+#wd-filters #wd-filter-drawer .drawer-header .drawer-title .drawer-stats {
+  font-size: 0.8em;
+}
+#wd-filters #wd-filter-drawer .drawer-header .close-button {
+  padding: 1rem;
+  width: 4.4rem;
+  height: 4.4rem;
+  margin-right: -1rem;
+  cursor: pointer;
+}
+#wd-filters #wd-filter-drawer .drawer-header .close-button path {
+  transition: fill 0.2s ease-in-out;
+}
+#wd-filters #wd-filter-drawer .drawer-header .close-button:hover path {
+  fill: rgb(var(--color-base-accent-2));
+}
+#wd-filters #wd-filter-drawer .drawer-content {
+  height: 100%;
+  padding-top: 10rem;
+  overflow-y: auto;
+}
+#wd-filters #wd-filter-drawer .wd-apply-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  padding: 0.5rem 4rem 0.5rem 1rem;
+  background-color: rgb(var(--color-background));
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+#wd-filters #wd-filter-drawer .wd-apply-button:hover {
+  background-color: white;
+  color: rgb(var(--color-base-accent-2));
+}
+#wd-filters #wd-filter-drawer .wd-apply-button:hover svg path {
+  fill: rgb(var(--color-base-accent-2));
+}
+#wd-filters #wd-filter-drawer .wd-apply-button .icon {
+  position: absolute;
+  display: inline-block;
+  right: 1rem;
+  width: 1.6rem;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+#wd-filters #wd-filter-drawer .filter-button {
+  text-align: left;
+  margin: 1rem;
+  font-size: 1.2em;
+}
+#wd-filters #wd-filter-drawer .filter-button .icon {
+  top: 2rem;
+}
+#wd-filters #wd-filter-drawer .filter-button .filter-settings {
+  border: none;
+  position: relative;
+  box-shadow: none;
+  margin-bottom: 1rem;
+  padding-right: 2rem;
+  top: auto;
+  z-index: auto;
+  font-size: 1.4rem;
+  background-color: transparent;
+}
+#wd-filters #wd-filter-drawer .filter-button .filter-settings input {
+  margin-left: 0;
+}
+#wd-filters #wd-filter-drawer .filter-button .filter-settings .filter-footer {
+  padding: 1rem 0;
+}
+
+@keyframes spin {
+  from {
+    left: -5%;
+  }
+  to {
+    left: 100%;
+  }
+}
+@keyframes spin {
+  from {
+    left: -5%;
+  }
+  to {
+    left: 100%;
+  }
+}
+#wd-filters .wd-loader {
+  height: 1px;
+  background-color: rgb(var(--color-base-accent-2));
+  position: absolute;
+  width: 5%;
+  top: 0px;
+}
+#wd-filters.loading .wd-loader {
+  animation-name: spin;
+  animation-duration: 3.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+  display: block;
+}

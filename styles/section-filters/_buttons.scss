@@ -1,0 +1,46 @@
+#wd-filters {
+
+  .filter-button {
+  
+    position: relative;
+    margin-right: 1.5rem;
+    color: rgba(var(--color-foreground), 0.75);
+    font-size: 1.4rem;
+    
+    padding: 0.5rem 3rem 0.5rem 1.25rem;
+    
+    border-radius: 0.3rem;
+
+    background-color: transparent;
+    line-height: inherit;
+    border:none;
+    
+    &.filter-sort{
+      display: flex;
+      align-items: center;
+      padding:0;
+    }
+
+    &-popup{
+      cursor: pointer;
+      transition: background-color $animation-duration ease-in-out;
+      padding-right: 3rem;
+      &:hover,&.active{
+        color: black;
+        background-color: rgb(var(--color-background));
+      }
+      .icon-caret {
+        position: absolute;
+        height: 0.6rem;
+        right: 1.25rem;
+        top: calc(50% - 0.2rem);
+      }
+    }
+  
+
+    
+  }
+
+  
+  
+}

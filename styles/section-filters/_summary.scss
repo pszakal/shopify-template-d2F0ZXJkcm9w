@@ -1,0 +1,74 @@
+#wd-filter-summary{
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -0.5rem 1rem -0.5rem;
+  font-size: 1.4rem;
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+
+  &.open{
+    transition-duration: 0.5s;
+    max-height: 100px;
+  }
+
+  .filter-summary-item {
+    margin:0.5rem 0.5rem 1rem 0.5rem;
+    .underlined-link{
+      cursor: pointer;
+      text-decoration: underline;
+      &:hover{
+        color: rgb(var(--color-link));
+        text-decoration-thickness: 0.2rem;
+      }
+    }
+  }
+
+  .filter-summary-button {
+    transition: all $animation-duration ease;
+    
+    a{
+
+      border-radius: 3rem;
+      padding: 0.5rem 0.5rem 0.5rem 1rem;
+      box-shadow: $solid-shadow;
+      
+      text-decoration: none;
+      color:black;
+      background-color: white;
+    }
+    &.adding{
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    &.deleting{
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+
+  & svg{
+    margin-top: -2px;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+    padding: 6px;
+    
+    &:hover{
+      path{
+        stroke:rgb(var(--color-base-accent-2));
+      }
+    }
+
+    path{
+      transition: stroke $animation-duration ease-in-out;
+    }
+  }
+  .wd-apply-button button{
+    border:none;
+    background-color: transparent;
+  }
+}
+#wd-filter-clear{
+  margin:0.5rem 0.5rem 1rem 0.5rem; 
+}

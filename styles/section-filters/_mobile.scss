@@ -1,0 +1,165 @@
+#wd-filters{
+  #open-filter-drawer{
+    background-color: white;
+    border:none;
+    font-size: 1.4rem;
+    padding: 0.9rem 1.25rem 0.9rem 1.25rem;
+    margin-left:-1.25rem;
+    cursor: pointer;
+    .icon{
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      margin-top: -4px;
+    }
+  }
+  #wd-filter-drawer{
+    position: fixed;
+    top:0;
+    bottom:0;
+    left:100%;
+    right:0;
+    z-index: 999;
+    opacity: 0;
+    overflow: hidden;
+    transition: left 0.2s ease, opacity 0.2s ease;
+
+    &.open {
+      left: 0;
+      opacity: 1;
+      .wrapper{
+        transform: translate(0);
+      }
+      .backdrop{
+        display:block;
+      }
+    }
+
+    .backdrop{
+      position: absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .wrapper{
+      display:block;
+      background-color: rgb(var(--color-background));
+      width: calc(100% - 5rem);
+      margin-left: auto;
+      height: 100%;
+      
+      max-width: 37.5rem;
+      transition: transform 0.4s ease;
+      transform: translate(100%);
+    }
+
+    .drawer-header{
+
+      position:fixed;
+      top:0;
+      width: 100%;
+      background-color: white;
+      z-index: 1;
+      padding:2rem;
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+
+      .drawer-title{
+        text-align: left;
+        line-height: 1.2;
+        
+        &>div{
+          font-weight: bold;
+        }
+        .drawer-stats{
+          font-size: 0.8em;
+        }
+      }
+      .close-button{
+        padding: 1rem;
+        width: 4.4rem;
+        height: 4.4rem;
+        margin-right: -1rem;
+        cursor: pointer;
+        path{
+          transition: fill $animation-duration ease-in-out;
+        }
+        &:hover{
+          path{
+            fill:rgb(var(--color-base-accent-2));
+          }
+        }
+      }
+      
+    }
+    .drawer-content{
+      height: 100%;
+      padding-top: 10rem;
+      overflow-y: auto;
+    }
+    .wd-apply-button{
+      position: absolute;
+      bottom:1rem;
+      right:1rem;
+      display:flex;
+      padding: 0.5rem 4rem 0.5rem 1rem;
+      background-color: rgb(var(--color-background));
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      &:hover{
+        background-color: white;
+        color: rgb(var(--color-base-accent-2));
+        svg{
+          path{
+            fill: rgb(var(--color-base-accent-2));
+          }
+        }
+      }
+      .icon{
+        position: absolute;
+        display: inline-block;
+        right: 1rem;
+        width: 1.6rem;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+
+    }
+    .filter-button {
+      
+      text-align: left;
+      margin: 1rem;
+      font-size: 1.2em;
+      .icon{
+        top:2rem;
+      }
+      .filter-settings{
+        border: none;
+        position: relative;
+        box-shadow: none;
+        margin-bottom: 1rem;
+        padding-right: 2rem;
+        top:auto;
+        z-index: auto;
+        font-size: 1.4rem;
+        background-color: transparent;
+        input{
+          margin-left: 0;
+        }
+        .filter-footer{
+          padding: 1rem 0;
+        }
+      }
+    } 
+  }
+}
+
+#wd-filters{
+  #wd-filter-drawer{
+
+    
+  }
+} 

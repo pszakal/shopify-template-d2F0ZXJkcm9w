@@ -1,0 +1,56 @@
+
+#wd-filters{
+  background-color: $background;
+  position: relative;
+  border-top:$light-border;
+
+
+  h2 {
+    font-size: 1.4rem;
+    margin: 0;
+    padding: 0.5rem 3rem 0.5rem 0;
+  }
+
+  .filter-wrapper {
+    padding:0.5rem 0;
+    display: block;
+    grid-column-start: span 2;
+
+  }
+  
+  form{
+
+    display: grid;
+    gap: 0 0.5rem;
+    grid-template-columns: 1fr max-content max-content;
+    margin: 0.5rem;
+    align-items: start;
+
+    >.filter-button:last-child{
+      
+      padding-right: 0;
+      margin-right: 0;
+      
+    }
+  }
+  .filters {
+
+    // margin-right: 3.5rem;
+    align-items: center;
+    // align-self: flex-start;
+    // grid-column: 1;
+    // grid-row: 1;
+    display: flex;
+    // flex-wrap: wrap;
+    .wrapper{
+      margin-right: 3.5rem;
+    align-items: center;
+    align-self: flex-start;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-wrap: wrap;
+    }
+
+  }
+}

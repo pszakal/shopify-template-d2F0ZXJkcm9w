@@ -1,0 +1,17 @@
+@import '_animations';
+
+#wd-filters {
+  .wd-loader{
+    height:1px;
+    background-color: rgb(var(--color-base-accent-2));
+    position: absolute;
+    width:5%;
+    top:0px;
+  }
+  &.loading {
+    .wd-loader{
+      @include loader-spin();
+      display:block;
+    }
+  }
+}
